@@ -1,22 +1,21 @@
 package com.photosharing.app.users;
 
+import com.photosharing.app.auth.Authority;
 import com.photosharing.app.comments.Comment;
 import com.photosharing.app.followers.Follower;
 import com.photosharing.app.likes.Like;
 import com.photosharing.app.posts.Post;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User extends org.springframework.security.core.userdetails.User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -33,6 +32,7 @@ public class User extends org.springframework.security.core.userdetails.User imp
 
     private Instant createdAt = Instant.now();
 
+    private List<Authority> authorities = new ArrayList<Authority>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<Comment>();
 
@@ -48,9 +48,12 @@ public class User extends org.springframework.security.core.userdetails.User imp
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follower> followings = new ArrayList<Follower>();
 
-    public User(String email, String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public User(String email, String username, String password, List<Authority> authorities, Boolean enabled) {
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
         this.email = email;
+        this.enabled = enabled;
     }
 
     public Integer getId() {
@@ -71,6 +74,34 @@ public class User extends org.springframework.security.core.userdetails.User imp
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
     public List<Comment> getComments() {
@@ -111,5 +142,13 @@ public class User extends org.springframework.security.core.userdetails.User imp
 
     public void setFollowings(List<Follower> followings) {
         this.followings = followings;
+    }
+
+    public List<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
     }
 }
