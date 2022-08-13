@@ -1,15 +1,14 @@
 package com.photosharing.app.users;
 
+import com.photosharing.app.auth.Role;
 import com.photosharing.app.comments.Comment;
 import com.photosharing.app.followers.Follower;
 import com.photosharing.app.likes.Like;
 import com.photosharing.app.posts.Post;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.*;
@@ -42,7 +41,8 @@ public class User implements UserDetails {
 
     public Boolean isEnabled = true;
 
-    private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Role> authorities = new ArrayList<Role>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<Comment>();
@@ -59,7 +59,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follower> followings = new ArrayList<Follower>();
 
-    public User(String email, String username, String password, List<? extends GrantedAuthority> authorities) {
+    public User(String email, String username, String password, List<Role> authorities) {
         this.email = email;
         this.username = username;
         this.password = password;
@@ -152,11 +152,11 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public List<Role> getAuthorities() {
         return authorities;
     }
 
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    public void setAuthorities(List<Role> authorities) {
         this.authorities = authorities;
     }
 
