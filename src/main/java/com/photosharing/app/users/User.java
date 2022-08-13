@@ -1,38 +1,49 @@
 package com.photosharing.app.users;
 
-import com.photosharing.app.auth.Authority;
 import com.photosharing.app.comments.Comment;
 import com.photosharing.app.followers.Follower;
 import com.photosharing.app.likes.Like;
 import com.photosharing.app.posts.Post;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
-    private String email;
-
-    private String photoUrl;
 
     private String username;
 
     private String password;
 
-    private Boolean enabled;
+    @Column(nullable = false)
+    private String email;
+
+    private String photoUrl;
+
+    private String bio;
 
     private Instant createdAt = Instant.now();
 
-    private List<Authority> authorities = new ArrayList<Authority>();
+    private Boolean isAccountNonExpired = true;
+
+    private Boolean isAccountNonLocked = true;
+
+    private Boolean isCredentialsNonExpired = true;
+
+    public Boolean isEnabled = true;
+
+    private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<Comment>();
 
@@ -48,16 +59,33 @@ public class User {
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follower> followings = new ArrayList<Follower>();
 
-    public User(String email, String username, String password, List<Authority> authorities, Boolean enabled) {
+    public User(String email, String username, String password, List<? extends GrantedAuthority> authorities) {
+        this.email = email;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
-        this.email = email;
-        this.enabled = enabled;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -76,32 +104,60 @@ public class User {
         this.photoUrl = photoUrl;
     }
 
-    public String getUsername() {
-        return username;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public boolean isAccountNonExpired() {
+        return isAccountNonExpired;
     }
 
-    public String getPassword() {
-        return password;
+    public void setAccountNonExpired(Boolean accountNonExpired) {
+        isAccountNonExpired = accountNonExpired;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
+    public void setAccountNonLocked(Boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return isCredentialsNonExpired;
+    }
+
+    public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
     public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+        isEnabled = enabled;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 
     public List<Comment> getComments() {
@@ -142,13 +198,5 @@ public class User {
 
     public void setFollowings(List<Follower> followings) {
         this.followings = followings;
-    }
-
-    public List<Authority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(List<Authority> authorities) {
-        this.authorities = authorities;
     }
 }
