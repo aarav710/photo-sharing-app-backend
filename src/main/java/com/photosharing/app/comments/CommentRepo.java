@@ -1,5 +1,6 @@
 package com.photosharing.app.comments;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

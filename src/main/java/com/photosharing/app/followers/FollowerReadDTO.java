@@ -2,34 +2,13 @@ package com.photosharing.app.followers;
 
 import com.photosharing.app.users.User;
 
-import javax.persistence.*;
 import java.time.Instant;
 
-@Entity
-@Table(name = "followers")
-public class Follower {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class FollowerReadDTO {
     private Integer id;
-
-    // the user that has got the follower
-    @ManyToOne
-    @JoinColumn(name = "following_id", nullable = false)
     private User following;
-
-    // the user that is the follower
-    @ManyToOne
-    @JoinColumn(name = "follower_id", nullable = false)
     private User follower;
-
     private Instant createdAt = Instant.now();
-
-    public Follower() {}
-
-    public Follower(User following, User follower) {
-        this.following = following;
-        this.follower = follower;
-    }
 
     public Integer getId() {
         return id;
@@ -63,3 +42,4 @@ public class Follower {
         this.createdAt = createdAt;
     }
 }
+

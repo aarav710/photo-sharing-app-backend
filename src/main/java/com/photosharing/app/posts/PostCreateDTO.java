@@ -17,12 +17,12 @@ public class PostCreateDTO {
         return caption;
     }
 
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
     public String getPhotoUrl() {
         return photoUrl;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
     }
 
     public void setPhotoUrl(String photoUrl) {

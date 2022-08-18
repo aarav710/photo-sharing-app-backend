@@ -1,21 +1,16 @@
-package com.photosharing.app.comments;
+package com.photosharing.app.likes;
 
-import com.photosharing.app.posts.Post;
 import com.photosharing.app.users.User;
 
 import java.time.Instant;
 
-public class CommentReadDTO {
+public class LikeReadDTO {
     private Integer id;
-    private String text;
     private Instant createdAt;
     private User user;
+
     public Integer getId() {
         return id;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public Instant getCreatedAt() {
@@ -28,10 +23,6 @@ public class CommentReadDTO {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public void setCreatedAt(Instant createdAt) {

@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class UserController {
 
@@ -12,8 +14,15 @@ public class UserController {
     private UserService userService;
 
     @GetMapping(path = "/users/{id}")
-    public ResponseEntity<Integer> getUserById(@PathVariable Integer userId) {
-      return new ResponseEntity<>(userId, HttpStatus.OK);
+    public ResponseEntity<UserReadDTO> getUserById(@PathVariable Integer userId) {
+        UserReadDTO user = userService.getUserById(userId);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/users")
+    public ResponseEntity<List<UserReadDTO>> getUsersByUsername(@RequestParam String username, @RequestParam Integer page) {
+        List<UserReadDTO> users = userService.getUsersByUsername(username, page);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     // id as a parameter is not required as the information will be obtained through the principal object

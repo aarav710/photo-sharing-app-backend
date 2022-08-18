@@ -27,4 +27,20 @@ public class Like {
         this.user = user;
         this.post = post;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Post getPost() {
+        return post;
+    }
 }
