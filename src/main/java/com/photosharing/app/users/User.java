@@ -1,37 +1,53 @@
 package com.photosharing.app.users;
 
+import com.photosharing.app.auth.Role;
 import com.photosharing.app.comments.Comment;
 import com.photosharing.app.followers.Follower;
 import com.photosharing.app.likes.Like;
 import com.photosharing.app.posts.Post;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
-public class User extends org.springframework.security.core.userdetails.User implements UserDetails {
+@Table(name = "users", indexes = {
+        @Index(name = "username_index", columnList = "username", unique = true),
+        @Index(name = "email_index", columnList = "email", unique = true),
+})
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String photoUrl;
 
-    private String username;
-
-    private String password;
-
-    private Boolean enabled;
+    private String bio;
 
     private Instant createdAt = Instant.now();
+
+    private Boolean isAccountNonExpired = true;
+
+    private Boolean isAccountNonLocked = true;
+
+    private Boolean isCredentialsNonExpired = true;
+
+    public Boolean isEnabled = true;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Role> authorities = new ArrayList<Role>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<Comment>();
@@ -48,13 +64,33 @@ public class User extends org.springframework.security.core.userdetails.User imp
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follower> followings = new ArrayList<Follower>();
 
-    public User(String email, String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public User(String email, String username, String password, List<Role> authorities) {
         this.email = email;
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -71,6 +107,62 @@ public class User extends org.springframework.security.core.userdetails.User imp
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public boolean isAccountNonExpired() {
+        return isAccountNonExpired;
+    }
+
+    public void setAccountNonExpired(Boolean accountNonExpired) {
+        isAccountNonExpired = accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
+    }
+
+    public void setAccountNonLocked(Boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return isCredentialsNonExpired;
+    }
+
+    public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    @Override
+    public List<Role> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(List<Role> authorities) {
+        this.authorities = authorities;
     }
 
     public List<Comment> getComments() {

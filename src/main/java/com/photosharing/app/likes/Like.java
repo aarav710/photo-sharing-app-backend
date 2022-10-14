@@ -7,7 +7,9 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "likes", indexes = {
+        @Index(name = "user_id_index", columnList = "user_id"),
+})
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,5 +28,21 @@ public class Like {
     public Like(User user, Post post) {
         this.user = user;
         this.post = post;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Post getPost() {
+        return post;
     }
 }

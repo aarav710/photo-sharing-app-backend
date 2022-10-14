@@ -1,6 +1,8 @@
 package com.photosharing.app.users;
 
+import java.util.List;
+
 public interface UserService {
     UserReadDTO getUserById(Integer userId);
-    UserReadDTO getUsersByUsername(String username);
+    List<UserReadDTO> getUsersByUsername(String username, Integer page);
 }

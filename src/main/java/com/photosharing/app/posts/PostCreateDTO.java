@@ -1,9 +1,15 @@
 package com.photosharing.app.posts;
 
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 public class PostCreateDTO {
+
+    @Size(max = 150, message = "Your caption should be less than 150 characters long.")
     private String caption;
+
+    @NotEmpty
     private String photoUrl;
 
     public PostCreateDTO(){}
@@ -17,12 +23,12 @@ public class PostCreateDTO {
         return caption;
     }
 
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
     public String getPhotoUrl() {
         return photoUrl;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
     }
 
     public void setPhotoUrl(String photoUrl) {
