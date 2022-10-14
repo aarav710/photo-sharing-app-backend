@@ -20,6 +20,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    // page as a natural number, starting from 0.
     @GetMapping(path = "/users")
     public ResponseEntity<List<UserReadDTO>> getUsersByUsername(@RequestParam String username, @RequestParam Integer page) {
         List<UserReadDTO> users = userService.getUsersByUsername(username, page);

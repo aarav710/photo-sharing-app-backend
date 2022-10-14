@@ -12,7 +12,7 @@ public class Follower {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    // the user that has got the follower
+    // the user that is being followed
     @ManyToOne
     @JoinColumn(name = "following_id", nullable = false)
     private User following;

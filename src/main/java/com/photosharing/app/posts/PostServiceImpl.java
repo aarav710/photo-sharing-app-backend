@@ -3,6 +3,8 @@ package com.photosharing.app.posts;
 import com.photosharing.app.comments.CommentRepo;
 import com.photosharing.app.exceptions.NotFoundException;
 import com.photosharing.app.exceptions.UnauthorizedException;
+import com.photosharing.app.followers.Follower;
+import com.photosharing.app.followers.FollowerRepo;
 import com.photosharing.app.likes.LikeRepo;
 import com.photosharing.app.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +25,10 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostRepo postRepo;
+
+    @Autowired
+    private FollowerRepo followerRepo;
+
     @Autowired
     private PostMapper postMapper;
 
@@ -37,7 +44,6 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
-    // run all three database queries in this operation in parallel
     public PostReadDetailDTO getPostDetailViewById(Integer postId) {
         Post post = getPostById(postId);
         Integer likesCount = likeRepo.countByPost_Id(post.getId());
@@ -58,7 +64,11 @@ public class PostServiceImpl implements PostService {
 */
 public List<PostReadDetailDTO> findFeed(Integer userId, Integer page) {
     Pageable pageable = PageRequest.of(page, POSTS_RESPONSE_LIMIT, Sort.by(Sort.Direction.DESC, "createdAt"));
-    List<Object[]> posts = postRepo.findFeedPostsWithLikesCountAndCommentsCount(userId, pageable);
+    List<Follower> followings = followerRepo.findByFollower_Id(userId);
+    List<Integer> followingIds = followings.stream()
+            .map(following -> following.getFollowing().getId())
+            .collect(Collectors.toList());
+    List<Object[]> posts = postRepo.findFeedPostsWithLikesCountAndCommentsCount(followingIds, pageable);
     return posts.stream()
             .map(post -> postMapper.postToPostReadDetailDTO((Post) post[0], (Integer) post[1], (Integer) post[2]))
             .collect(Collectors.toList());
@@ -85,7 +95,7 @@ public List<PostReadDetailDTO> findFeed(Integer userId, Integer page) {
         }
         post.setCaption(updatePostInformation.getCaption());
         postRepo.save(post);
-        // maybe make these 2 queries concurrent
+
         Integer likesCount = likeRepo.countByPost_Id(post.getId());
         Integer commentsCount = commentRepo.countByPost_Id(post.getId());
         return postMapper.postToPostReadDetailDTO(post, likesCount, commentsCount);

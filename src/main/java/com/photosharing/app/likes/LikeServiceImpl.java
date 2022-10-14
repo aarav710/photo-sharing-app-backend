@@ -1,6 +1,7 @@
 package com.photosharing.app.likes;
 
 import com.photosharing.app.exceptions.NotFoundException;
+import com.photosharing.app.exceptions.ResourceAlreadyExists;
 import com.photosharing.app.exceptions.UnauthorizedException;
 import com.photosharing.app.posts.Post;
 import com.photosharing.app.posts.PostRepo;
@@ -32,6 +33,10 @@ public class LikeServiceImpl implements LikeService {
 
     public LikeReadDTO createLike(Integer postId, User user) {
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post with id " + postId + " could not be found."));
+        boolean likeExists = likeRepo.existsByPostIdAndUserId(postId, user.getId());
+        if (likeExists) {
+            throw new ResourceAlreadyExists("You have already liked this post before.");
+        }
         Like like = new Like(user, post);
         likeRepo.save(like);
         return likeMapper.likeToLikeReadDTO(like);
