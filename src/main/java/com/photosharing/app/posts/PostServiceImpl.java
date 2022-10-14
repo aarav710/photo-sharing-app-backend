@@ -8,6 +8,7 @@ import com.photosharing.app.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
+
+    final public static Integer POSTS_RESPONSE_LIMIT = 20;
+
     @Autowired
     private PostRepo postRepo;
     @Autowired
@@ -27,22 +31,44 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private CommentRepo commentRepo;
 
-    public PostReadDTO getPostById(Integer postId) {
+    // make it cacheable
+    private Post getPostById(Integer postId) {
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post with id " + postId + "could not be found."));
-        return postMapper.postToPostReadDTO(post);
+        return post;
     }
 
-    public List<PostReadDTO> findFeedPostsByUsername(String username) {
-        List<PostReadDTO> posts = new ArrayList<PostReadDTO>();
-        return posts;
+    // run all three database queries in this operation in parallel
+    public PostReadDetailDTO getPostDetailViewById(Integer postId) {
+        Post post = getPostById(postId);
+        Integer likesCount = likeRepo.countByPost_Id(post.getId());
+        Integer commentsCount = commentRepo.countByPost_Id(post.getId());
+        return postMapper.postToPostReadDetailDTO(post, likesCount, commentsCount);
     }
+/*
+    public List<PostReadDTO> findFeed(Integer userId, Integer page) {
+        Pageable pageable = PageRequest.of(page, POSTS_RESPONSE_LIMIT, Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<Post> feedPosts = postRepo.findFeedPosts(userId, pageable);
+        List<Integer> postIds = feedPosts.stream().map(post -> post.getId()).collect(Collectors.toList());
+        List<Object[]> commentsCountResponse = commentRepo.countCommentsByPost_Ids(postIds);
+        List<Object[]> likesCountResponse = likeRepo.countLikesByPost_Ids(postIds);
 
-    // make it sorted according to the date created and think about pagination for infinite queries/scroll
-    public List<PostReadDTO> getPostsByUserId(Integer userId, Integer offset, Integer limit) {
-        Pageable pageable = PageRequest.of(offset, limit);
+
+
+    }
+*/
+public List<PostReadDetailDTO> findFeed(Integer userId, Integer page) {
+    Pageable pageable = PageRequest.of(page, POSTS_RESPONSE_LIMIT, Sort.by(Sort.Direction.DESC, "createdAt"));
+    List<Object[]> posts = postRepo.findFeedPostsWithLikesCountAndCommentsCount(userId, pageable);
+    return posts.stream()
+            .map(post -> postMapper.postToPostReadDetailDTO((Post) post[0], (Integer) post[1], (Integer) post[2]))
+            .collect(Collectors.toList());
+}
+
+    public List<PostReadDTO> getPostsByUserId(Integer userId, Integer page) {
+        Pageable pageable = PageRequest.of(page, POSTS_RESPONSE_LIMIT, Sort.by(Sort.Direction.DESC, "createdAt"));
         List<Post> posts = postRepo.findByUser_Id(userId, pageable);
         return posts.stream()
-                .map(post -> postMapper.postToPostReadDTO(post))
+                .map(postMapper::postToPostReadDTO)
                 .collect(Collectors.toList());
     }
 
@@ -58,10 +84,18 @@ public class PostServiceImpl implements PostService {
             throw new UnauthorizedException("You cannot do this request as this post is not owned by you.");
         }
         post.setCaption(updatePostInformation.getCaption());
+        postRepo.save(post);
         // maybe make these 2 queries concurrent
         Integer likesCount = likeRepo.countByPost_Id(post.getId());
         Integer commentsCount = commentRepo.countByPost_Id(post.getId());
         return postMapper.postToPostReadDetailDTO(post, likesCount, commentsCount);
     }
 
+    public void deletePost(User user, Integer postId) {
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post with id " + postId + " could not be found."));
+        if (post.getUser().getId() != user.getId()) {
+            throw new UnauthorizedException("You cannot do this request as this post is not owned by you.");
+        }
+        postRepo.delete(post);
+    }
 }

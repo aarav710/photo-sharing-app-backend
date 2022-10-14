@@ -23,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentReadDTO> getCommentsByPostId(Integer postId) {
         List<Comment> comments = commentRepo.findByPost_Id(postId);
         return comments.stream()
-                .map(comment -> commentMapper.commentToCommentReadDTO(comment))
+                .map(commentMapper::commentToCommentReadDTO)
                 .collect(Collectors.toList());
     }
 

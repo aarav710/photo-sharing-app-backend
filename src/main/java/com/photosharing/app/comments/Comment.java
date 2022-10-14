@@ -7,11 +7,15 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "comments", indexes = {
+        @Index(name = "post_id_index", columnList = "post_id"),
+})
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @Column(nullable = false)
     private String text;
 
     private Instant createdAt = Instant.now();

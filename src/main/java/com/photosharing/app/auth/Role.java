@@ -15,7 +15,7 @@ public class Role implements GrantedAuthority {
 
     private String authority;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

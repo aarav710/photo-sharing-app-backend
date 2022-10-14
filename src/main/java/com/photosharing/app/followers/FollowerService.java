@@ -10,4 +10,6 @@ public interface FollowerService {
 
     FollowerReadDTO createNewFollower(Integer followingUserId, User user);
 
+    List<FollowerReadDTO> getFollowingsByUserId(Integer userId);
+
 }

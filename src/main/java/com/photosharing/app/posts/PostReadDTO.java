@@ -1,6 +1,5 @@
 package com.photosharing.app.posts;
 
-import com.photosharing.app.users.UserReadDTO;
 
 import java.time.Instant;
 

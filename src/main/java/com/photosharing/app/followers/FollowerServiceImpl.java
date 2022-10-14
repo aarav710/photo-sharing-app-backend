@@ -26,7 +26,14 @@ public class FollowerServiceImpl implements FollowerService {
     public List<FollowerReadDTO> getFollowersByUserId(Integer userId) {
         List<Follower> followers = followerRepo.findByFollower_Id(userId);
         return followers.stream()
-                .map(follower -> followerMapper.followerToFollowerReadDTO(follower))
+                .map(followerMapper::followerToFollowerReadDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<FollowerReadDTO> getFollowingsByUserId(Integer userId) {
+        List<Follower> followings = followerRepo.findByFollowing_Id(userId);
+        return followings.stream()
+                .map(followerMapper::followerToFollowerReadDTO)
                 .collect(Collectors.toList());
     }
 

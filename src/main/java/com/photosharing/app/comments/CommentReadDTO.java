@@ -1,6 +1,5 @@
 package com.photosharing.app.comments;
 
-import com.photosharing.app.posts.Post;
 import com.photosharing.app.users.User;
 
 import java.time.Instant;

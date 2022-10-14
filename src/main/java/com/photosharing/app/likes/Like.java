@@ -7,7 +7,9 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "likes", indexes = {
+        @Index(name = "user_id_index", columnList = "user_id"),
+})
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

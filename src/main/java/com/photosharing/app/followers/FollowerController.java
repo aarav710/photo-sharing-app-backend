@@ -15,20 +15,26 @@ public class FollowerController {
     @Autowired
     FollowerService followerService;
 
-    @GetMapping(path = "users/{userId}/followers")
+    @GetMapping(path = "/users/{userId}/followers")
     public ResponseEntity<List<FollowerReadDTO>> getFollowersByUserId(@PathVariable Integer userId) {
         List<FollowerReadDTO> followers = followerService.getFollowersByUserId(userId);
         return new ResponseEntity<>(followers, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "followers/{followId}")
+    @GetMapping(path = "users/{userId}/followings")
+    public ResponseEntity<List<FollowerReadDTO>> getFollowingsByUserId(@PathVariable Integer userId) {
+        List<FollowerReadDTO> followings = followerService.getFollowingsByUserId(userId);
+        return new ResponseEntity<>(followings, HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/followers/{followId}")
     public ResponseEntity<Void> deleteFollow(@PathVariable Integer followId, Principal principal) {
         User user = (User) principal;
         followerService.deleteFollow(followId, user);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping(path = "followers/{followingUserId}")
+    @PostMapping(path = "/followers/{followingUserId}")
     public ResponseEntity<FollowerReadDTO> createNewFollower(@PathVariable Integer followingUserId, Principal principal) {
         User user = (User) principal;
         FollowerReadDTO follower = followerService.createNewFollower(followingUserId, user);

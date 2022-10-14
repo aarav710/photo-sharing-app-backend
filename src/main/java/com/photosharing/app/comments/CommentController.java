@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class CommentController {
     }
 
     @PostMapping(path = "/posts/{postId}/comments")
-    public ResponseEntity<CommentReadDTO> createNewCommentByPostId(@PathVariable Integer postId, Principal principal, @RequestBody CommentCreateDTO newComment) {
+    public ResponseEntity<CommentReadDTO> createNewCommentByPostId(@PathVariable Integer postId, Principal principal, @Valid @RequestBody CommentCreateDTO newComment) {
         User user = (User) principal;
         CommentReadDTO comment = commentService.createNewComment(newComment, postId, user);
         return new ResponseEntity<>(comment, HttpStatus.CREATED);
     }
 
-    @DeleteMapping(path = "comments/{commentId}")
+    @DeleteMapping(path = "/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Integer commentId, Principal principal) {
         User user = (User) principal;
         commentService.deleteComment(user, commentId);

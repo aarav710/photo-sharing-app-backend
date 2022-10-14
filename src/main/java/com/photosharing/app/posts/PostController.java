@@ -4,8 +4,10 @@ import com.photosharing.app.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -16,8 +18,8 @@ public class PostController {
     private PostService postService;
 
     @GetMapping(path = "/posts/{id}")
-    public ResponseEntity<PostReadDTO> getPostById(@PathVariable Integer postId) {
-        PostReadDTO post = postService.getPostById(postId);
+    public ResponseEntity<PostReadDetailDTO> getPostById(@PathVariable Integer postId) {
+        PostReadDetailDTO post = new PostReadDetailDTO();
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
@@ -27,24 +29,30 @@ public class PostController {
     }
 
     // returns the image normal view of the posts
-    @GetMapping(path = "users/{userId}/posts")
-    public ResponseEntity<List<PostReadDTO>> getPostsByUserId(@PathVariable Integer userId, @RequestParam Integer offset, @RequestParam Integer limit) {
-        List<PostReadDTO> posts = postService.getPostsByUserId(userId, offset, limit);
+    @GetMapping(path = "/users/{userId}/posts")
+    public ResponseEntity<List<PostReadDTO>> getPostsByUserId(@PathVariable Integer userId, @RequestParam Integer page) {
+        List<PostReadDTO> posts = postService.getPostsByUserId(userId, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @PostMapping(path = "/posts")
-    public ResponseEntity<PostReadDetailDTO> createNewPost(Principal principal, @RequestBody PostCreateDTO newPostInformation) {
+    public ResponseEntity<PostReadDetailDTO> createNewPost(Principal principal, @Valid @RequestBody PostCreateDTO newPostInformation) {
         User user = (User) principal;
         PostReadDetailDTO post = postService.createNewPost(user, newPostInformation);
         return new ResponseEntity<>(post, HttpStatus.CREATED);
     }
 
     @PutMapping(path = "/posts/{postId}")
-    public ResponseEntity<PostReadDetailDTO> updatePost(Principal principal, @RequestBody PostUpdateDTO updatePostInformation, @PathVariable Integer postId) {
+    public ResponseEntity<PostReadDetailDTO> updatePost(Principal principal,@Valid @RequestBody PostUpdateDTO updatePostInformation, @PathVariable Integer postId) {
         User user = (User) principal;
         PostReadDetailDTO post = postService.updatePost(user, updatePostInformation, postId);
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
+    @DeleteMapping(path = "/posts/{postId}")
+    public ResponseEntity<Void> deletePost(Principal principal, @PathVariable Integer postId) {
+        User user = (User) principal;
+        postService.deletePost(user, postId);
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+    }
 }

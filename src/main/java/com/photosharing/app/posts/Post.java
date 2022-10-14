@@ -9,12 +9,17 @@ import java.time.Instant;
 import java.util.*;
 
 @Entity
-@Table(name = "posts")
+@Table(name = "posts", indexes = {
+        @Index(name = "user_id_index", columnList = "user_id"),
+        @Index(name = "createdAt_index", columnList = "createdAt"),
+})
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String caption;
+
+    @Column(nullable = false)
     private String photoUrl;
 
     private Instant createdAt = Instant.now();
