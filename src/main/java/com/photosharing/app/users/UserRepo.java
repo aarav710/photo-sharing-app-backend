@@ -10,4 +10,7 @@ public interface UserRepo extends CrudRepository<User, Integer> {
     List<User> findByUsernameContaining(String username, Pageable pageable);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
+
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }

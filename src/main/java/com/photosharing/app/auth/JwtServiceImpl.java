@@ -1,20 +1,14 @@
 package com.photosharing.app.auth;
 
-import com.photosharing.app.exceptions.UnauthorizedException;
-import com.photosharing.app.users.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.util.*;
 
-@Component
+@Service
 public class JwtServiceImpl implements JwtService {
 
     // token valid for 10 days
