@@ -19,13 +19,15 @@ public class PostController {
 
     @GetMapping(path = "/posts/{id}")
     public ResponseEntity<PostReadDetailDTO> getPostById(@PathVariable Integer postId) {
-        PostReadDetailDTO post = new PostReadDetailDTO();
+        PostReadDetailDTO post = postService.getPostDetailViewById(postId);
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @GetMapping(path = "/feed")
-    public ResponseEntity<Integer> getFeed() {
-        return new ResponseEntity<>(5, HttpStatus.OK);
+    public ResponseEntity<List<PostReadDetailDTO>> getFeed(@RequestParam Integer page, Principal principal) {
+        User user = (User) principal;
+        List<PostReadDetailDTO> posts = postService.findFeed(user.getId(), page);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     // returns the image normal view of the posts
@@ -51,8 +53,8 @@ public class PostController {
 
     @DeleteMapping(path = "/posts/{postId}")
     public ResponseEntity<Void> deletePost(Principal principal, @PathVariable Integer postId) {
-        User user = (User) principal;
-        postService.deletePost(user, postId);
+        UserDetails user = (UserDetails) principal;
+        postService.deletePost(user.getUsername(), postId);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 }

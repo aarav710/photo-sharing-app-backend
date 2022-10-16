@@ -12,7 +12,7 @@ public interface PostService {
 
     PostReadDetailDTO updatePost(User user, PostUpdateDTO updatePostInformation, Integer postId);
 
-    void deletePost(User user, Integer postId);
+    void deletePost(String username, Integer postId);
 
     List<PostReadDetailDTO> findFeed(Integer userId, Integer page);
 

@@ -27,10 +27,10 @@ public class PostServiceImpl implements PostService {
     private PostRepo postRepo;
 
     @Autowired
-    private FollowerRepo followerRepo;
+    private PostMapper postMapper;
 
     @Autowired
-    private PostMapper postMapper;
+    private FollowerRepo followerRepo;
 
     @Autowired
     private LikeRepo likeRepo;
@@ -101,9 +101,9 @@ public List<PostReadDetailDTO> findFeed(Integer userId, Integer page) {
         return postMapper.postToPostReadDetailDTO(post, likesCount, commentsCount);
     }
 
-    public void deletePost(User user, Integer postId) {
+    public void deletePost(String username, Integer postId) {
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post with id " + postId + " could not be found."));
-        if (post.getUser().getId() != user.getId()) {
+        if (post.getUser().getUsername() != username) {
             throw new UnauthorizedException("You cannot do this request as this post is not owned by you.");
         }
         postRepo.delete(post);
