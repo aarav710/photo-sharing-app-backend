@@ -4,9 +4,11 @@ import com.photosharing.app.exceptions.ResourceAlreadyExists;
 import com.photosharing.app.users.User;
 import com.photosharing.app.users.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+@Service
 public class AuthServiceImpl implements AuthService {
 
     @Autowired

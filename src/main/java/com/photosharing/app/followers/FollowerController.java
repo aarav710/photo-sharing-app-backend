@@ -4,6 +4,7 @@ import com.photosharing.app.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -13,7 +14,7 @@ import java.util.List;
 public class FollowerController {
 
     @Autowired
-    FollowerService followerService;
+    private FollowerService followerService;
 
     @GetMapping(path = "/users/{userId}/followers")
     public ResponseEntity<List<FollowerReadDTO>> getFollowersByUserId(@PathVariable Integer userId) {
@@ -29,15 +30,15 @@ public class FollowerController {
 
     @DeleteMapping(path = "/followers/{followId}")
     public ResponseEntity<Void> deleteFollow(@PathVariable Integer followId, Principal principal) {
-        User user = (User) principal;
-        followerService.deleteFollow(followId, user);
+        UserDetails user = (UserDetails) principal;
+        followerService.deleteFollow(followId, user.getUsername());
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
     @PostMapping(path = "/followers/{followingUserId}")
     public ResponseEntity<FollowerReadDTO> createNewFollower(@PathVariable Integer followingUserId, Principal principal) {
-        User user = (User) principal;
-        FollowerReadDTO follower = followerService.createNewFollower(followingUserId, user);
+        UserDetails user = (UserDetails) principal;
+        FollowerReadDTO follower = followerService.createNewFollower(followingUserId, user.getUsername());
         return new ResponseEntity<>(follower, HttpStatus.CREATED);
     }
 }

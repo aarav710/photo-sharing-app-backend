@@ -7,6 +7,7 @@ import com.photosharing.app.followers.Follower;
 import com.photosharing.app.followers.FollowerRepo;
 import com.photosharing.app.likes.LikeRepo;
 import com.photosharing.app.users.User;
+import com.photosharing.app.users.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,9 @@ public class PostServiceImpl implements PostService {
     private PostRepo postRepo;
 
     @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
     private PostMapper postMapper;
 
     @Autowired
@@ -40,7 +44,7 @@ public class PostServiceImpl implements PostService {
 
     // make it cacheable
     private Post getPostById(Integer postId) {
-        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post with id " + postId + "could not be found."));
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post with id " + postId + " could not be found."));
         return post;
     }
 
@@ -82,14 +86,16 @@ public List<PostReadDetailDTO> findFeed(Integer userId, Integer page) {
                 .collect(Collectors.toList());
     }
 
-    public PostReadDetailDTO createNewPost(User user, PostCreateDTO newPostInformation) {
+    public PostReadDetailDTO createNewPost(String username, PostCreateDTO newPostInformation) {
+        User user = userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException("User with username " + username + " could not be found."));
         Post post = new Post(newPostInformation.getCaption(), newPostInformation.getPhotoUrl(), user);
         postRepo.save(post);
         return postMapper.postToPostReadDetailDTO(post, 0, 0);
     }
 
-    public PostReadDetailDTO updatePost(User user, PostUpdateDTO updatePostInformation, Integer postId) {
+    public PostReadDetailDTO updatePost(String username, PostUpdateDTO updatePostInformation, Integer postId) {
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post with id " + postId + " could not be found."));
+        User user = userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException("User with username " + username + " could not be found."));
         if (post.getUser().getId() != user.getId()) {
             throw new UnauthorizedException("You cannot do this request as this post is not owned by you.");
         }

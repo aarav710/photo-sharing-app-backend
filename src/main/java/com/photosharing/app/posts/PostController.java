@@ -17,11 +17,12 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping(path = "/posts/{id}")
+    @GetMapping(path = "/posts/{postId}")
     public ResponseEntity<PostReadDetailDTO> getPostById(@PathVariable Integer postId) {
         PostReadDetailDTO post = postService.getPostDetailViewById(postId);
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
+
 
     @GetMapping(path = "/feed")
     public ResponseEntity<List<PostReadDetailDTO>> getFeed(@RequestParam Integer page, Principal principal) {
@@ -29,6 +30,8 @@ public class PostController {
         List<PostReadDetailDTO> posts = postService.findFeed(user.getId(), page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
+
+
 
     // returns the image normal view of the posts
     @GetMapping(path = "/users/{userId}/posts")
@@ -39,15 +42,15 @@ public class PostController {
 
     @PostMapping(path = "/posts")
     public ResponseEntity<PostReadDetailDTO> createNewPost(Principal principal, @Valid @RequestBody PostCreateDTO newPostInformation) {
-        User user = (User) principal;
-        PostReadDetailDTO post = postService.createNewPost(user, newPostInformation);
+        UserDetails user = (UserDetails) principal;
+        PostReadDetailDTO post = postService.createNewPost(user.getUsername(), newPostInformation);
         return new ResponseEntity<>(post, HttpStatus.CREATED);
     }
 
     @PutMapping(path = "/posts/{postId}")
     public ResponseEntity<PostReadDetailDTO> updatePost(Principal principal,@Valid @RequestBody PostUpdateDTO updatePostInformation, @PathVariable Integer postId) {
-        User user = (User) principal;
-        PostReadDetailDTO post = postService.updatePost(user, updatePostInformation, postId);
+        UserDetails user = (UserDetails) principal;
+        PostReadDetailDTO post = postService.updatePost(user.getUsername(), updatePostInformation, postId);
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 

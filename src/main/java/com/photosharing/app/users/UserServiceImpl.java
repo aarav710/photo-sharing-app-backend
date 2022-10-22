@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<UserReadDTO> getUsersByUsername(String username, Integer page) {
-        Pageable pageable = PageRequest.of(page, UserServiceImpl.USERS_RESPONSE_LIMIT);
+        Pageable pageable = PageRequest.of(page, USERS_RESPONSE_LIMIT);
         List<User> users = userRepo.findByUsernameContaining(username, pageable);
         return users.stream()
                 .map(userMapper::userToUserReadDTO)

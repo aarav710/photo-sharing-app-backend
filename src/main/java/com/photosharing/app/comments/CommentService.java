@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface CommentService {
     List<CommentReadDTO> getCommentsByPostId(Integer postId);
-    CommentReadDTO createNewComment(CommentCreateDTO newComment, Integer postId, User user);
-    void deleteComment(User user, Integer commentId);
+    CommentReadDTO createNewComment(CommentCreateDTO newComment, Integer postId, String username);
+    void deleteComment(String username, Integer commentId);
 }

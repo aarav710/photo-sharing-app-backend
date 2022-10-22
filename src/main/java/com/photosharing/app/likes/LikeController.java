@@ -4,6 +4,7 @@ import com.photosharing.app.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -16,8 +17,8 @@ public class LikeController {
 
     @PostMapping(path = "/posts/{postId}/likes")
     public ResponseEntity<LikeReadDTO> createLike(@PathVariable Integer postId, Principal principal) {
-        User user = (User) principal;
-        LikeReadDTO like = likeService.createLike(postId, user);
+        UserDetails user = (UserDetails) principal;
+        LikeReadDTO like = likeService.createLike(postId, user.getUsername());
         return new ResponseEntity<>(like, HttpStatus.CREATED);
     }
 
@@ -29,8 +30,8 @@ public class LikeController {
 
     @DeleteMapping(path = "/likes/{likeId}")
     public ResponseEntity<Void> deleteLike(@PathVariable Integer likeId, Principal principal) {
-        User user = (User) principal;
-        likeService.deleteLike(likeId, user);
+        UserDetails user = (UserDetails) principal;
+        likeService.deleteLike(likeId, user.getUsername());
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 }

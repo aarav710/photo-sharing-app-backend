@@ -37,15 +37,17 @@ public class FollowerServiceImpl implements FollowerService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteFollow(Integer followId, User user) {
+    public void deleteFollow(Integer followId, String username) {
         Follower follow = followerRepo.findById(followId).orElseThrow(() -> new NotFoundException("Follow with the id " + followId + " could not be found"));
+        User user = userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException("User with username " + username + " could not be found."));
         if (follow.getFollower().getId() != user.getId()) {
             throw new UnauthorizedException("User who has made this request does not have the appropriate follow for this request.");
         }
         followerRepo.delete(follow);
     }
 
-    public FollowerReadDTO createNewFollower(Integer followingUserId, User user) {
+    public FollowerReadDTO createNewFollower(Integer followingUserId, String username) {
+        User user = userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException("User with username " + username + " could not be found."));
         // logic to check if this particular follower/following relationship exists
         if (followerRepo.existsByFollower_IdAndFollowing_Id(user.getId(), followingUserId)) {
             throw new ResourceAlreadyExists(user.getUsername() + " already follows given user.");

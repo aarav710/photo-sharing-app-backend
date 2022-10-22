@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface LikeService {
     List<LikeReadDTO> findLikesByPostId(Integer postId);
-    LikeReadDTO createLike(Integer postId, User user);
+    LikeReadDTO createLike(Integer postId, String username);
 
-    void deleteLike(Integer likeId, User user);
+    void deleteLike(Integer likeId, String username);
 
 }

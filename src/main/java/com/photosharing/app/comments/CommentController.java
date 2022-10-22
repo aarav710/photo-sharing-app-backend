@@ -4,6 +4,7 @@ import com.photosharing.app.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,15 +24,15 @@ public class CommentController {
 
     @PostMapping(path = "/posts/{postId}/comments")
     public ResponseEntity<CommentReadDTO> createNewCommentByPostId(@PathVariable Integer postId, Principal principal, @Valid @RequestBody CommentCreateDTO newComment) {
-        User user = (User) principal;
-        CommentReadDTO comment = commentService.createNewComment(newComment, postId, user);
+        UserDetails user = (UserDetails) principal;
+        CommentReadDTO comment = commentService.createNewComment(newComment, postId, user.getUsername());
         return new ResponseEntity<>(comment, HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Integer commentId, Principal principal) {
-        User user = (User) principal;
-        commentService.deleteComment(user, commentId);
+        UserDetails user = (UserDetails) principal;
+        commentService.deleteComment(user.getUsername(), commentId);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 }

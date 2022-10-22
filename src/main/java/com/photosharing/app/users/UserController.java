@@ -14,7 +14,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(path = "/users/{id}")
+    @GetMapping(path = "/users/{userId}")
     public ResponseEntity<UserReadDTO> getUserById(@PathVariable Integer userId) {
         UserReadDTO user = userService.getUserById(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);

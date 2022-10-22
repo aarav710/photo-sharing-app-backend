@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface FollowerService {
     List<FollowerReadDTO> getFollowersByUserId(Integer userId);
-    void deleteFollow(Integer followId, User user);
+    void deleteFollow(Integer followId, String username);
 
-    FollowerReadDTO createNewFollower(Integer followingUserId, User user);
+    FollowerReadDTO createNewFollower(Integer followingUserId, String username);
 
     List<FollowerReadDTO> getFollowingsByUserId(Integer userId);
 

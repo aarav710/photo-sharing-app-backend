@@ -8,9 +8,9 @@ import java.util.List;
 public interface PostService {
     List<PostReadDTO> getPostsByUserId(Integer userId, Integer page);
 
-    PostReadDetailDTO createNewPost(User user, PostCreateDTO post);
+    PostReadDetailDTO createNewPost(String username, PostCreateDTO post);
 
-    PostReadDetailDTO updatePost(User user, PostUpdateDTO updatePostInformation, Integer postId);
+    PostReadDetailDTO updatePost(String username, PostUpdateDTO updatePostInformation, Integer postId);
 
     void deletePost(String username, Integer postId);
 
