@@ -5,4 +5,6 @@ import java.util.List;
 public interface UserService {
     UserReadDTO getUserById(Integer userId);
     List<UserReadDTO> getUsersByUsername(String username, Integer page);
+
+    UserReadDTO updateUser(String username, UserCreateDTO user);
 }

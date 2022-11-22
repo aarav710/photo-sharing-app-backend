@@ -7,6 +7,8 @@ public class UserReadDTO {
     private String username;
     private String email;
     private String photoUrl;
+
+    private String bio;
     private Boolean enabled;
     private Instant createdAt;
 
@@ -34,6 +36,10 @@ public class UserReadDTO {
         return createdAt;
     }
 
+    public String getBio() {
+        return bio;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -56,5 +62,9 @@ public class UserReadDTO {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 }

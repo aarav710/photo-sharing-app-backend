@@ -16,8 +16,11 @@ public class Role implements GrantedAuthority {
     private String authority;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private User user;
+
+    public Role() {}
+
 
     public Integer getId() {
         return id;
@@ -26,5 +29,13 @@ public class Role implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return authority;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

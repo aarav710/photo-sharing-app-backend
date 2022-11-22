@@ -30,4 +30,12 @@ public class UserServiceImpl implements UserService {
                 .map(userMapper::userToUserReadDTO)
                 .collect(Collectors.toList());
     }
+
+    public UserReadDTO updateUser(String username, UserCreateDTO updateUserInformation) {
+        User user = userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException("User with username " + username + " is not found."));
+        user.setBio(updateUserInformation.getBio());
+        user.setPhotoUrl(updateUserInformation.getPhotoUrl());
+        userRepo.save(user);
+        return userMapper.userToUserReadDTO(user);
+    }
 }

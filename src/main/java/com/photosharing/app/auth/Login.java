@@ -1,5 +1,8 @@
 package com.photosharing.app.auth;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.Min;
 
 public class Login {
@@ -8,11 +11,7 @@ public class Login {
     @Min(8)
     private String password;
 
-    Login(String username, String password) {
-        this.password = password;
-        this.username = username;
-    }
-    Login() {}
+    public Login(){}
 
     public String getUsername() {
         return username;

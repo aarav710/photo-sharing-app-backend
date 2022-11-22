@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,21 +53,10 @@ public class PostServiceImpl implements PostService {
         Integer commentsCount = commentRepo.countByPost_Id(post.getId());
         return postMapper.postToPostReadDetailDTO(post, likesCount, commentsCount);
     }
-/*
-    public List<PostReadDTO> findFeed(Integer userId, Integer page) {
-        Pageable pageable = PageRequest.of(page, POSTS_RESPONSE_LIMIT, Sort.by(Sort.Direction.DESC, "createdAt"));
-        List<Post> feedPosts = postRepo.findFeedPosts(userId, pageable);
-        List<Integer> postIds = feedPosts.stream().map(post -> post.getId()).collect(Collectors.toList());
-        List<Object[]> commentsCountResponse = commentRepo.countCommentsByPost_Ids(postIds);
-        List<Object[]> likesCountResponse = likeRepo.countLikesByPost_Ids(postIds);
 
-
-
-    }
-*/
-public List<PostReadDetailDTO> findFeed(Integer userId, Integer page) {
+public List<PostReadDetailDTO> findFeed(String username, Integer page) {
     Pageable pageable = PageRequest.of(page, POSTS_RESPONSE_LIMIT, Sort.by(Sort.Direction.DESC, "createdAt"));
-    List<Follower> followings = followerRepo.findByFollower_Id(userId);
+    List<Follower> followings = followerRepo.findByFollower_Username(username);
     List<Integer> followingIds = followings.stream()
             .map(following -> following.getFollowing().getId())
             .collect(Collectors.toList());

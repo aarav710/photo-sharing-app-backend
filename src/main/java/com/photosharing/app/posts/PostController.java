@@ -26,11 +26,10 @@ public class PostController {
 
     @GetMapping(path = "/feed")
     public ResponseEntity<List<PostReadDetailDTO>> getFeed(@RequestParam Integer page, Principal principal) {
-        User user = (User) principal;
-        List<PostReadDetailDTO> posts = postService.findFeed(user.getId(), page);
+        UserDetails user = (UserDetails) principal;
+        List<PostReadDetailDTO> posts = postService.findFeed(user.getUsername(), page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
-
 
 
     // returns the image normal view of the posts

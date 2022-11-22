@@ -1,5 +1,8 @@
 package com.photosharing.app.auth;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 
@@ -13,13 +16,7 @@ public class Register {
     @Email
     private String email;
 
-    Register(String username, String password, String email) {
-        this.password = password;
-        this.username = username;
-        this.email = email;
-    }
-    Register() {}
-
+    public Register(){}
     public String getUsername() {
         return username;
     }

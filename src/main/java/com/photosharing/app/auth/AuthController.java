@@ -1,9 +1,6 @@
 package com.photosharing.app.auth;
 
-import com.photosharing.app.users.User;
-import com.photosharing.app.users.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,14 +9,17 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.List;
 
-@RestController("/auth")
+@RestController
+//@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
 
     @Autowired
@@ -31,16 +31,22 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@Valid @RequestBody Login login) {
-        authenticate(login.getUsername(), login.getPassword());
+    @PostMapping("/auth/signin")
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody Login login, BindingResult bindingResult) {
+        Role role = new Role();
+        role.setAuthority("ROLE_USER");
+        List<Role> authorities = new ArrayList<>();
+        authorities.add(role);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword(), authorities));
+        //SecurityContextHolder.getContext().setAuthentication(authentication);
+
         String token = jwtService.createToken(login.getUsername());
         JwtResponse response = new JwtResponse(token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(@Valid @RequestBody Register register) {
+    @PostMapping("/auth/register")
+    public ResponseEntity<JwtResponse> register(@Valid @RequestBody Register register, BindingResult bindingResult) {
         authService.register(register);
         String token = jwtService.createToken(register.getUsername());
         JwtResponse response = new JwtResponse(token);

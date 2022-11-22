@@ -14,7 +14,7 @@ public interface PostService {
 
     void deletePost(String username, Integer postId);
 
-    List<PostReadDetailDTO> findFeed(Integer userId, Integer page);
+    List<PostReadDetailDTO> findFeed(String username, Integer page);
 
     PostReadDetailDTO getPostDetailViewById(Integer postId);
 }

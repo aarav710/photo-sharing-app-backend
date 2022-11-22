@@ -3,8 +3,12 @@ package com.photosharing.app.users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -29,12 +33,9 @@ public class UserController {
 
     // id as a parameter is not required as the information will be obtained through the principal object
     @PutMapping(path = "/users")
-    public ResponseEntity<Integer> updateUser(@RequestBody UserCreateDTO user) {
-        return new ResponseEntity<>(5, HttpStatus.OK);
-    }
-
-    @PostMapping(path = "/users")
-    public ResponseEntity<Integer> createUser(@RequestBody UserCreateDTO user) {
-        return new ResponseEntity<>(5, HttpStatus.OK);
+    public ResponseEntity<UserReadDTO> updateUser(@Valid @RequestBody UserCreateDTO updateUserInformation, Principal principal, BindingResult bindingResult) {
+        UserDetails user = (UserDetails) principal;
+        UserReadDTO userResponse = userService.updateUser(user.getUsername(), updateUserInformation);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 }
